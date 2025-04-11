@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { user } from "$lib/firebase";
   import * as Card from "$lib/components/ui/card";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 
@@ -41,21 +42,22 @@
   <Card.Root class=" mt-10">
     <Card.Header>
       {#if $page.url.pathname.includes("/username")}
-        <Card.Title>Username</Card.Title>
+        <Card.Title class="text-2xl">Username</Card.Title>
         <Card.Description>Choose a unique username</Card.Description>
       {:else if $page.url.pathname.includes("/photo")}
-        <Card.Title>Photo</Card.Title>
+        <Card.Title class="text-2xl">Photo</Card.Title>
         <Card.Description>Choose a cool profile picture</Card.Description>
+      {:else if $user}
+        <Card.Title class="text-2xl">Welcome, {$user.displayName}</Card.Title>
+        <Card.Description>Your are logged in</Card.Description>
       {:else}
-        <Card.Title>Sign In</Card.Title>
+        <Card.Title class="text-2xl">Sign in</Card.Title>
         <Card.Description>Sign in to create your profile</Card.Description>
       {/if}
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="mt-5">
       {@render children()}
     </Card.Content>
-    <Card.Footer>
-      <p>Card Footer</p>
-    </Card.Footer>
+    <Card.Footer></Card.Footer>
   </Card.Root>
 </main>
