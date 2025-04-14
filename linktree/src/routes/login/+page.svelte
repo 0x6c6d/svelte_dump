@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { auth, user } from "$lib/firebase";
   import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
   import { Button } from "$lib/components/ui/button/index.js";
@@ -7,8 +8,11 @@
   // server can't authenticate user (cookies are needed)
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
-    const user = await signInWithPopup(auth, provider);
-    console.log(user);
+    const result = await signInWithPopup(auth, provider);
+    if (result.user) {
+      console.log("User logged in: " + result.user);
+      goto("/login/username");
+    }
   }
 </script>
 

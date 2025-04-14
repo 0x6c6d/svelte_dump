@@ -53,3 +53,49 @@ function userStore() {
 }
 
 export const user = userStore();
+
+/**
+ * @param  {string} path document path or reference
+ * @param  {any} startWith optional default data
+ * @returns a store with realtime updates on document data
+ */
+export function docStore<T>(path: string) {
+  let unsubscribe: () => void;
+
+  const docRef = doc(db, path);
+
+  const { subscribe } = writable<T | null>(null, (set) => {
+    // onSnapshot listens to document changes in real time
+    unsubscribe = onSnapshot(docRef, (snapshot) => {
+      set((snapshot.data() as T) ?? null);
+    });
+
+    return () => unsubscribe();
+  });
+
+  return {
+    subscribe,
+    ref: docRef,
+    id: docRef.id,
+  };
+}
+
+interface UserData {
+  username: string;
+  bio: string;
+  photoURL: string;
+  published: boolean;
+  links: unknown[];
+}
+
+// the derived() store takes multiple stores and combines them into a single object
+export const userData: Readable<UserData | null> = derived(
+  user,
+  ($user, set) => {
+    if ($user) {
+      return docStore<UserData>(`users/${$user.uid}`).subscribe(set);
+    } else {
+      set(null);
+    }
+  }
+);
