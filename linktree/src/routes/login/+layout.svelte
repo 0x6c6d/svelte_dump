@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { user } from "$lib/firebase";
+  import { user, userData } from "$lib/firebase";
   import * as Card from "$lib/components/ui/card";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 
@@ -46,7 +46,13 @@
     <Card.Header>
       {#if $page.url.pathname.includes("/username")}
         <Card.Title class="text-2xl">Username</Card.Title>
-        <Card.Description>Choose a unique username</Card.Description>
+        <Card.Description>
+          {#if $userData?.username}
+            Hello @{$userData?.username}
+          {:else}
+            Choose a unique username
+          {/if}
+        </Card.Description>
       {:else if $page.url.pathname.includes("/photo")}
         <Card.Title class="text-2xl">Photo</Card.Title>
         <Card.Description>Choose a cool profile picture</Card.Description>

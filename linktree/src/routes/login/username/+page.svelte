@@ -78,10 +78,10 @@
       Your username is <span class="font-bold">@{$userData.username}</span>
     </p>
     <p class="text-sm">(Usernames cannot be changed)</p>
-    <a class="btn btn-primary" href="/login/photo">Upload Profile Image</a>
+    <Button class="mt-4" href="/login/photo">Upload Profile Image</Button>
   {:else}
     <div class="flex flex-col">
-      {#if $message}
+      {#if $message}a
         <span class="text-emerald-400 mb-2">
           {$message}
         </span>
