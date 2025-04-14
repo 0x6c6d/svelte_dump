@@ -23,7 +23,7 @@
     "clsx": "^2.1.1",
     "eslint": "^9.18.0",
     "eslint-plugin-svelte": "^3.0.0",
-    "formsnap": "1.0.1",
+    "formsnap": "^2.0.1",
     "globals": "^16.0.0",
     "lucide-svelte": "^0.487.0",
     "svelte": "^5.0.0",

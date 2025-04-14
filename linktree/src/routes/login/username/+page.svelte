@@ -1,112 +1,53 @@
 <script lang="ts">
-  import AuthCheck from "$lib/components/shared/AuthCheck.svelte";
-  import { db, user, userData } from "$lib/firebase";
-  import { doc, getDoc, writeBatch } from "firebase/firestore";
-  import { Button } from "$lib/components/ui/button/index.js";
-  let username = $state("");
-  let loading = $state(false);
-  let isAvailable = $state(false);
-  let debounceTimer: NodeJS.Timeout;
+  import { superForm } from "sveltekit-superforms";
+  import { zodClient } from "sveltekit-superforms/adapters";
+  import type { PageData } from "./$types";
+  import { usernameSchema } from "$lib/schemas/username";
+  // > bun add formsnap
+  import { Field, Control, Label, Description, FieldErrors } from "formsnap";
+  import Button from "$lib/components/ui/button/button.svelte";
+  import Input from "$lib/components/ui/input/input.svelte";
 
-  const re = /^(?=[a-zA-Z0-9._]{3,16}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+  // form validation
+  let { data }: { data: PageData } = $props();
 
-  let isValid = $derived(
-    username?.length > 2 && username.length < 16 && re.test(username)
-  );
-  let isTouched = $derived(username.length > 0);
-  let isTaken = $derived(isValid && !isAvailable && !loading);
+  const form = superForm(data.form, {
+    validators: zodClient(usernameSchema),
+  });
 
-  function checkAvailability() {
-    isAvailable = false;
-    clearTimeout(debounceTimer);
-    if (!isValid) {
-      loading = false;
-      return;
-    }
+  const { form: formData, enhance, message } = form;
 
-    loading = true;
-
-    // function is wrapped inside a debouncer to prevent unnecessary queries
-    debounceTimer = setTimeout(async () => {
-      console.log("checking availability of", username);
-
-      const ref = doc(db, "usernames", username);
-      const exists = await getDoc(ref).then((doc) => doc.exists());
-
-      isAvailable = !exists;
-      loading = false;
-    }, 500);
-  }
-
-  async function confirmUsername(e: SubmitEvent) {
-    e.preventDefault();
-    console.log("confirming username", username);
-    // writeBatch() ensures atomic write -> needed because two documents are modified
-    const batch = writeBatch(db);
-    batch.set(doc(db, "usernames", username), { uid: $user?.uid });
-    batch.set(doc(db, "users", $user!.uid), {
-      username,
-      photoURL: $user?.photoURL ?? null,
-      published: true,
-      bio: "I am the Walrus",
-      links: [
-        {
-          title: "Test Link",
-          url: "https://google.de",
-          icon: "custom",
-        },
-      ],
-    });
-
-    await batch.commit();
-
-    username = "";
-    isAvailable = false;
-  }
+  // data validation
 </script>
 
-<AuthCheck>
-  {#if $userData?.username}
-    <p class="text-lg">
-      Your username is <span class="text-success font-bold"
-        >@{$userData.username}</span
-      >
-    </p>
-    <p class="text-sm">(Usernames cannot be changed)</p>
-    <Button href="/login/photo">Upload Profile Image</Button>
-  {:else}
-    <form class="w-2/5" onsubmit={confirmUsername}>
-      <input
-        type="text"
-        placeholder="Username"
-        class="input w-full"
-        bind:value={username}
-        oninput={checkAvailability}
-        class:input-error={!isValid && isTouched}
-        class:input-warning={isTaken}
-        class:input-success={isAvailable && isValid && !loading}
-      />
-      <div class="my-4 min-h-16 px-8 w-full">
-        {#if loading}
-          <p class="text-secondary">Checking availability of @{username}...</p>
-        {/if}
-
-        {#if !isValid && isTouched}
-          <p class="text-error text-sm">
-            must be 3-16 characters long, alphanumeric only
-          </p>
-        {/if}
-
-        {#if isValid && !isAvailable && !loading}
-          <p class="text-warning text-sm">
-            @{username} is not available
-          </p>
-        {/if}
-
-        {#if isAvailable}
-          <Button type="submit">Confirm username @{username}</Button>
-        {/if}
-      </div>
-    </form>
+<div class="flex flex-col">
+  {#if $message}
+    <span class="text-emerald-400 mb-2">
+      {$message}
+    </span>
   {/if}
-</AuthCheck>
+  <form method="POST" use:enhance class="w-full md:w-96 space-y-2 p-4 lg:p-0">
+    <div>
+      <Field {form} name="username">
+        <Control>
+          {#snippet children({ props })}
+            <Label class="font-medium mb-1">Username</Label>
+            <Input
+              {...props}
+              type="text"
+              placeholder="Enter your username"
+              bind:value={$formData.username}
+            />
+            <Description class="text-muted-foreground text-xs mt-1">
+              This is your public display name
+            </Description>
+          {/snippet}
+        </Control>
+        <FieldErrors class="text-sm text-destructive" />
+      </Field>
+    </div>
+    <div>
+      <Button size="sm" type="submit">Submit</Button>
+    </div>
+  </form>
+</div>
