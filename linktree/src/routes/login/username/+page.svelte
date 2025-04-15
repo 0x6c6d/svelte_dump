@@ -25,12 +25,35 @@
   let debounceTimer: NodeJS.Timeout;
   let username = $state("");
   let loading = $state(false);
+  let error = $state(false);
   let isAvailable = $state(false);
   let isTouched = $derived(username.length > 0);
   let isTaken = $derived(!isAvailable && !loading && isTouched);
 
+  // function checkAvailability() {
+  //   username = $formData.username;
+  //   isAvailable = false;
+  //   clearTimeout(debounceTimer);
+  //   loading = true;
+
+  //   debounceTimer = setTimeout(async () => {
+  //     console.log("checking availability of", username);
+
+  //     try {
+  //       const ref = doc(db, "usernames", username);
+  //       const exists = await getDoc(ref).then((doc) => doc.exists());
+
+  //       isAvailable = !exists;
+  //       loading = false;
+  //     } catch (err) {
+  //       console.log("checkAvailability() error: ", err);
+  //     }
+  //   }, 500);
+  // }
+
   function checkAvailability() {
     username = $formData.username;
+    error = false;
     isAvailable = false;
     clearTimeout(debounceTimer);
     loading = true;
@@ -38,11 +61,21 @@
     debounceTimer = setTimeout(async () => {
       console.log("checking availability of", username);
 
-      const ref = doc(db, "usernames", username);
-      const exists = await getDoc(ref).then((doc) => doc.exists());
+      try {
+        // Get a reference to the document
+        const ref = doc(db, "usernames", username);
 
-      isAvailable = !exists;
-      loading = false;
+        // Get a snapshot of the document
+        const docSnap = await getDoc(ref);
+
+        // Check if the document exists
+        isAvailable = !docSnap.exists();
+        loading = false;
+      } catch (err) {
+        console.error("checkAvailability() error:", err);
+        loading = false;
+        error = true;
+      }
     }, 500);
   }
 
@@ -55,7 +88,7 @@
       username,
       photoURL: $user?.photoURL ?? null,
       published: true,
-      bio: "I am the Walrus",
+      bio: "Hello World",
       links: [
         {
           title: "Test Link",
@@ -105,7 +138,9 @@
                   oninput={checkAvailability}
                 />
                 <Description class="text-muted-foreground text-xs mt-1">
-                  {#if loading}
+                  {#if error}
+                    An error occured...
+                  {:else if loading}
                     Checking availability of @{username}...
                   {:else if isTaken}
                     The username is already taken

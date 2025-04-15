@@ -38,10 +38,11 @@
     "zod": "^3.24.2"
   },
   "dependencies": {
-    "@lucide/svelte": "^0.487.0",
+    "@lucide/svelte": "^0.488.0",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
-    "mode-watcher": "^0.5.1"
+    "mode-watcher": "^0.5.1",
+    "sveltefire": "^0.4.5"
   },
   "trustedDependencies": [
     "@firebase/util",

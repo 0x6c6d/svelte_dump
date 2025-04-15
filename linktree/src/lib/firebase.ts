@@ -17,9 +17,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const db = getFirestore();
-export const auth = getAuth();
-export const storage = getStorage();
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 /**
  * @returns a store with the current firebase user
@@ -66,9 +66,13 @@ export function docStore<T>(path: string) {
 
   const { subscribe } = writable<T | null>(null, (set) => {
     // onSnapshot listens to document changes in real time
-    unsubscribe = onSnapshot(docRef, (snapshot) => {
-      set((snapshot.data() as T) ?? null);
-    });
+    try {
+      unsubscribe = onSnapshot(docRef, (snapshot) => {
+        set((snapshot.data() as T) ?? null);
+      });
+    } catch (err) {
+      console.error("Error subscribing to doc:", err);
+    }
 
     return () => unsubscribe();
   });

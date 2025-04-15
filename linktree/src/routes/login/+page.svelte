@@ -3,6 +3,7 @@
   import { auth, user } from "$lib/firebase";
   import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
   import { Button } from "$lib/components/ui/button/index.js";
+  import ChevronRight from "lucide-svelte/icons/chevron-right";
 
   // client side auth with jwt
   // server can't authenticate user (cookies are needed)
@@ -17,7 +18,12 @@
 </script>
 
 {#if $user}
-  <Button>Sign out</Button>
+  <div class="flex flex-row justify-between">
+    <Button>Sign out</Button>
+    <Button href="/login/username" variant="outline">
+      <ChevronRight />
+    </Button>
+  </div>
 {:else}
   <Button onclick={signInWithGoogle}
     ><svg
