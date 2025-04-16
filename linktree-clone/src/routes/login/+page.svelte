@@ -1,26 +1,17 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { auth } from "$lib/firebase";
-  import { userStore, SignedIn, SignedOut } from "sveltefire";
-  import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+  import { user, signInWithGoogle, signOutUser } from "$lib/firebase";
   import { Button } from "$lib/components/ui/button/index.js";
   import { ChevronRight } from "@lucide/svelte";
-
-  const user = userStore(auth);
-
-  // client side auth with jwt
-  // server can't authenticate user (cookies are needed)
-  async function signInWithGoogle() {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    if (result.user) {
-      console.log("User logged in: " + result.user);
-      goto("/login/username");
-    }
-  }
 </script>
 
-<SignedOut let:auth>
+{#if $user}
+  <div class="flex flex-row justify-between">
+    <Button onclick={() => signOutUser("/")}>Sign out</Button>
+    <Button href="/login/username" variant="outline">
+      <ChevronRight />
+    </Button>
+  </div>
+{:else}
   <Button onclick={signInWithGoogle}
     ><svg
       xmlns="http://www.w3.org/2000/svg"
@@ -57,13 +48,4 @@
       ></path>
     </svg>Sign in with Google</Button
   >
-</SignedOut>
-
-<SignedIn let:user let:signOut>
-  <div class="flex flex-row justify-between">
-    <Button onclick={signOut}>Sign out @{user.displayName}</Button>
-    <Button href="/login/username" variant="outline">
-      <ChevronRight />
-    </Button>
-  </div>
-</SignedIn>
+{/if}

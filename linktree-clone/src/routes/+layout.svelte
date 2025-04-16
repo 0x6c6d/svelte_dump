@@ -1,11 +1,9 @@
 <script lang="ts">
   import "../app.css";
-  import { FirebaseApp } from "sveltefire";
-  import { auth, firestore } from "$lib/firebase";
   // > bun add mode-watcher
-  import { ModeWatcher, toggleMode } from "mode-watcher";
-  import Sun from "lucide-svelte/icons/sun";
-  import Moon from "lucide-svelte/icons/moon";
+  import { ModeWatcher } from "mode-watcher";
+  import { toggleMode } from "mode-watcher";
+  import { Sun, Moon } from "@lucide/svelte";
   import { Button } from "$lib/components/ui/button/index.js";
 
   let { children } = $props();
@@ -32,8 +30,6 @@
 
   <!-- Main content -->
   <main class="flex-1">
-    <FirebaseApp {auth} {firestore}>
-      {@render children()}
-    </FirebaseApp>
+    {@render children()}
   </main>
 </div>
