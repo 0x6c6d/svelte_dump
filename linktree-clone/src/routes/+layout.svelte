@@ -1,12 +1,16 @@
 <script lang="ts">
   import "../app.css";
-  // > bun add mode-watcher
-  import { ModeWatcher } from "mode-watcher";
-  import { toggleMode } from "mode-watcher";
+  import { ModeWatcher, toggleMode } from "mode-watcher";
   import { Sun, Moon } from "@lucide/svelte";
   import { Button } from "$lib/components/ui/button/index.js";
+  import { onMount } from "svelte";
+  import { initAuthListener } from "$lib/firebase/init";
 
   let { children } = $props();
+
+  onMount(() => {
+    initAuthListener();
+  });
 </script>
 
 <ModeWatcher />

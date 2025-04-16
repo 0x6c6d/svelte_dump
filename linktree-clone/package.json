@@ -36,8 +36,7 @@
   "dependencies": {
     "@lucide/svelte": "^0.488.0",
     "firebase": "^11.6.0",
-    "firebase-admin": "^13.2.0",
-    "mode-watcher": "^0.5.1"
+    "mode-watcher": "^1.0.0"
   },
   "trustedDependencies": [
     "@firebase/util",

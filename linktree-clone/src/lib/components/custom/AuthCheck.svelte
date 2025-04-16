@@ -1,18 +1,13 @@
 <script lang="ts">
-  import { user } from "$lib/firebase";
-  import { Button } from "$lib/components/ui/button/index.js";
-  interface Props {
-    children?: import("svelte").Snippet;
-  }
+  import { user } from "$lib/stores/user";
+  import SignIn from "$lib/components/custom/SignIn.svelte";
 
-  let { children }: Props = $props();
+  let { children } = $props();
 </script>
 
 {#if $user}
   {@render children?.()}
 {:else}
-  <p class="text-error my-10">
-    You must be signed in to view this page.
-    <Button href="/login">Sign in</Button>
-  </p>
+  <p class="text-error my-10">You must be signed in to view this page.</p>
+  <SignIn />
 {/if}
