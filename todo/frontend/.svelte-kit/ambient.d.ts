@@ -41,6 +41,7 @@ declare module '$env/static/private' {
 	export const PWD: string;
 	export const LOGNAME: string;
 	export const XDG_SESSION_TYPE: string;
+	export const BUN_WHICH_IGNORE_CWD: string;
 	export const _: string;
 	export const XAUTHORITY: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
@@ -51,6 +52,7 @@ declare module '$env/static/private' {
 	export const LS_COLORS: string;
 	export const npm_package_version: string;
 	export const GIT_ASKPASS: string;
+	export const INIT_CWD: string;
 	export const CHROME_DESKTOP: string;
 	export const npm_lifecycle_script: string;
 	export const NVM_DIR: string;
@@ -61,6 +63,7 @@ declare module '$env/static/private' {
 	export const ZSH: string;
 	export const USER: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const BUN_INTERNAL_BUNX_INSTALL: string;
 	export const DISPLAY: string;
 	export const npm_lifecycle_event: string;
 	export const SHLVL: string;
@@ -85,7 +88,6 @@ declare module '$env/static/private' {
 	export const npm_node_execpath: string;
 	export const OLDPWD: string;
 	export const TERM_PROGRAM: string;
-	export const NODE_ENV: string;
 }
 
 /**
@@ -132,6 +134,7 @@ declare module '$env/dynamic/private' {
 		PWD: string;
 		LOGNAME: string;
 		XDG_SESSION_TYPE: string;
+		BUN_WHICH_IGNORE_CWD: string;
 		_: string;
 		XAUTHORITY: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
@@ -142,6 +145,7 @@ declare module '$env/dynamic/private' {
 		LS_COLORS: string;
 		npm_package_version: string;
 		GIT_ASKPASS: string;
+		INIT_CWD: string;
 		CHROME_DESKTOP: string;
 		npm_lifecycle_script: string;
 		NVM_DIR: string;
@@ -152,6 +156,7 @@ declare module '$env/dynamic/private' {
 		ZSH: string;
 		USER: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		BUN_INTERNAL_BUNX_INSTALL: string;
 		DISPLAY: string;
 		npm_lifecycle_event: string;
 		SHLVL: string;
@@ -176,7 +181,6 @@ declare module '$env/dynamic/private' {
 		npm_node_execpath: string;
 		OLDPWD: string;
 		TERM_PROGRAM: string;
-		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

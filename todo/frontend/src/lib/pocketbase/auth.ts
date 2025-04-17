@@ -9,6 +9,7 @@ import { pb } from "./pocketbase";
 export async function requestSignInOTP(email: string) {
   try {
     // send OTP email to the provided auth record
+    console.log("Request OTP for mail: ", email);
     const result = await pb.collection("users").requestOTP(email);
 
     return {
@@ -35,6 +36,7 @@ export async function requestSignInOTP(email: string) {
 export async function verifyOTP(result: OTPResponse, otp: string) {
   try {
     // authenticate with the requested OTP id and the OTP
+    console.log("Try to sign in with OTP: ", otp);
     const authData = await pb
       .collection("users")
       .authWithOTP(result.otpId, otp);
