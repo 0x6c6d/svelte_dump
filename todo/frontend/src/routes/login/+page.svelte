@@ -26,6 +26,7 @@
 
   async function logIn() {
     errorMsg = "";
+    console.log("OTPRresponse: ", otpResponse);
     var result = await verifyOTP(otpResponse, "123456");
 
     if (!result.success) {
