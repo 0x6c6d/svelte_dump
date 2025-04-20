@@ -10,8 +10,6 @@ import {
   schemaOtpNumber,
 } from "$lib/common/schemas/otpSchema.js";
 
-let otpResponse: OTPResponse;
-
 export const load: PageServerLoad = async () => {
   // Different schemas, no id required.
   const mailForm = await superValidate(zod(schemaOtpMail));
@@ -36,11 +34,10 @@ export const actions = {
     }
 
     console.log("OTP request success: ", result.message);
-    // TODO: this doesnt work: use SvelteKit Session Storage instead
-    otpResponse = result.data!;
     return {
       mailForm,
       message: "Mail form submitted",
+      otpResponse: result.data!,
     };
   },
 
@@ -52,10 +49,12 @@ export const actions = {
       return fail(400, { otpForm });
     }
 
+    const otpResponse: OTPResponse = { otpId: otpForm.data.otpId };
     const result = await verifyOTP(otpResponse, otpForm.data.otp);
     if (!result.success) {
       console.log("Verifying OTP failed: ", result.message);
-      return fail(505, { otpForm });
+      otpForm.errors.otp = [`Verifying OTP failed: ${result.message}`];
+      return fail(400, { otpForm });
     }
 
     console.log(

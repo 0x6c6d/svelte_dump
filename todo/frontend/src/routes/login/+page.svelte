@@ -1,5 +1,6 @@
 <script lang="ts">
   import { writable } from "svelte/store";
+  import type { OTPResponse } from "pocketbase";
   import Button from "$lib/components/ui/button/button.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
@@ -8,6 +9,7 @@
 
   let { data } = $props();
   const otpRequested = writable(false);
+  const otpResponse = writable<OTPResponse | null>(null);
 
   const {
     form: mailForm,
@@ -18,8 +20,9 @@
     resetForm: true,
     onResult: ({ result }) => {
       console.log("MailForm onResult: ", JSON.stringify(result));
-      if (result.type === "success") {
+      if (result.type === "success" && result.data && result.data.otpResponse) {
         otpRequested.set(true);
+        otpResponse.set(result.data!.otpResponse);
       }
     },
   });
@@ -34,7 +37,7 @@
   });
 </script>
 
-{#if $otpRequested}
+{#if !$otpRequested}
   <form method="POST" action="?/mail" use:mailEnhance>
     <div class="grid w-full items-center gap-4">
       <div class="flex flex-col space-y-1.5">
@@ -69,6 +72,8 @@
           aria-invalid={$otpErrors.otp ? "true" : undefined}
           bind:value={$otpForm.otp}
         />
+        <!-- Hidden input to send the otpId -->
+        <input type="hidden" name="otpId" value={$otpResponse?.otpId || ""} />
         {#if $otpErrors.otp}
           <p class="text-sm text-destructive">{$otpErrors.otp}</p>
         {:else if $otpMessage}
