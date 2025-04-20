@@ -5,18 +5,19 @@
   import Input from "$lib/components/ui/input/input.svelte";
   // form validation
   import { superForm } from "sveltekit-superforms/client";
-  import SuperDebug from "sveltekit-superforms";
 
   let { data } = $props();
   const otpRequested = writable(false);
 
   const {
     form: mailForm,
+    message: mailMessage,
     errors: mailErrors,
     enhance: mailEnhance,
   } = superForm(data.mailForm, {
     resetForm: true,
     onResult: ({ result }) => {
+      console.log("MailForm onResult: ", JSON.stringify(result));
       if (result.type === "success") {
         otpRequested.set(true);
       }
@@ -25,6 +26,7 @@
 
   const {
     form: otpForm,
+    message: otpMessage,
     errors: otpErrors,
     enhance: otpEnhance,
   } = superForm(data.otpForm, {
@@ -32,10 +34,7 @@
   });
 </script>
 
-<SuperDebug data={$mailForm} />
-<SuperDebug data={$otpForm} />
-
-{#if otpRequested}
+{#if $otpRequested}
   <form method="POST" action="?/mail" use:mailEnhance>
     <div class="grid w-full items-center gap-4">
       <div class="flex flex-col space-y-1.5">
@@ -50,9 +49,11 @@
         />
         {#if $mailErrors.email}
           <p class="text-sm text-destructive">{$mailErrors.email}</p>
+        {:else if $mailMessage}
+          <p class="text-sm text-emerald-400">{$mailMessage}</p>
         {/if}
       </div>
-      <Button class="mt-5">Send OTP</Button>
+      <Button type="submit" class="mt-5">Send OTP</Button>
     </div>
   </form>
 {:else}
@@ -70,9 +71,11 @@
         />
         {#if $otpErrors.otp}
           <p class="text-sm text-destructive">{$otpErrors.otp}</p>
+        {:else if $otpMessage}
+          <p class="text-sm text-emerald-400">{$otpMessage}</p>
         {/if}
       </div>
-      <Button class="mt-5">Log in</Button>
+      <Button type="submit" class="mt-5">Log in</Button>
     </div>
   </form>
 {/if}
