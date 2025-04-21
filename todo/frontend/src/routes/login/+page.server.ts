@@ -1,10 +1,10 @@
+import { goto } from "$app/navigation";
 import type { Actions, PageServerLoad } from "./$types.js";
 import { requestSignInOTP, verifyOTP } from "$lib/pocketbase/auth.js";
 import type { OTPResponse } from "pocketbase";
 
 import { superValidate, message } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { fail } from "@sveltejs/kit";
 import {
   schemaOtpMail,
   schemaOtpNumber,
@@ -24,13 +24,16 @@ export const actions = {
 
     if (!mailForm.valid) {
       console.log("Invalid form data: ", mailForm.data.email);
-      return fail(400, { mailForm });
+      return message(mailForm, "Invalid form data");
     }
 
     const result = await requestSignInOTP(mailForm.data.email);
     if (!result.success) {
       console.log("OTP request failed: ", result.message);
-      return fail(505, { mailForm });
+      return message(
+        mailForm,
+        result.message || "Failed to send OTP. Please try again."
+      );
     }
 
     console.log("OTP request success: ", result.message);
@@ -46,7 +49,7 @@ export const actions = {
 
     if (!otpForm.valid) {
       console.log("Invalid form data: ", otpForm.data.otp);
-      return fail(400, { otpForm });
+      return message(otpForm, "Invalid form data");
     }
 
     const otpResponse: OTPResponse = { otpId: otpForm.data.otpId };
@@ -54,7 +57,10 @@ export const actions = {
     if (!result.success) {
       console.log("Verifying OTP failed: ", result.message);
       otpForm.errors.otp = [`Verifying OTP failed: ${result.message}`];
-      return fail(400, { otpForm });
+      return message(
+        otpForm,
+        result.message || "Failed to verify OTP. Please try again."
+      );
     }
 
     console.log(
@@ -62,6 +68,6 @@ export const actions = {
       result.message,
       JSON.stringify(result.data)
     );
-    return message(otpForm, "OTP form submitted");
+    goto("/");
   },
 } satisfies Actions;

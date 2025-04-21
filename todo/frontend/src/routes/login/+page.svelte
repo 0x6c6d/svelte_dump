@@ -17,9 +17,9 @@
     errors: mailErrors,
     enhance: mailEnhance,
   } = superForm(data.mailForm, {
-    resetForm: true,
     onResult: ({ result }) => {
       console.log("MailForm onResult: ", JSON.stringify(result));
+      console.log(JSON.stringify(mailMessage));
       if (result.type === "success" && result.data && result.data.otpResponse) {
         otpRequested.set(true);
         otpResponse.set(result.data!.otpResponse);
@@ -32,9 +32,7 @@
     message: otpMessage,
     errors: otpErrors,
     enhance: otpEnhance,
-  } = superForm(data.otpForm, {
-    resetForm: true,
-  });
+  } = superForm(data.otpForm, {});
 </script>
 
 {#if !$otpRequested}
@@ -53,7 +51,7 @@
         {#if $mailErrors.email}
           <p class="text-sm text-destructive">{$mailErrors.email}</p>
         {:else if $mailMessage}
-          <p class="text-sm text-emerald-400">{$mailMessage}</p>
+          <p class="text-sm text-destructive">{$mailMessage}</p>
         {/if}
       </div>
       <Button type="submit" class="mt-5">Send OTP</Button>
