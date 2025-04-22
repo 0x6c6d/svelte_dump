@@ -11,9 +11,12 @@
 
 <div class="min-h-screen flex flex-col">
   <!-- Navbar -->
-  <nav class="w-full px-4 py-2 shadow flex justify-between items-center">
+  <nav class="w-full px-4 py-4 shadow flex justify-between items-center">
     <div class="text-xl font-bold">ToDo</div>
-    <div>
+    <div class="flex items-center">
+      <!-- Login -->
+      <Button href="/login" class="mr-3 align-middle">Login / Sign up</Button>
+      <!-- Toggle theme -->
       <Button on:click={toggleMode} variant="outline" size="icon">
         <Sun
           class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"

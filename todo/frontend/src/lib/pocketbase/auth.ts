@@ -1,5 +1,5 @@
+import pb from "./pocketbase";
 import type { OTPResponse } from "pocketbase";
-import { pb } from "./pocketbase";
 import { generateRandomString } from "$lib/utils/random";
 
 /**

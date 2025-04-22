@@ -1,10 +1,10 @@
 import PocketBase from "pocketbase";
-import { writable } from "svelte/store";
 
-export const pb = new PocketBase("http://localhost:8090");
+// TODO: read connection string from config
+const pb = new PocketBase("http://localhost:8090");
 
-export const currentUser = writable(pb.authStore.record);
+if (typeof window !== "undefined") {
+  pb.authStore.loadFromCookie(document.cookie);
+}
 
-pb.authStore.onChange(() => {
-  currentUser.set(pb.authStore.record);
-});
+export default pb;
