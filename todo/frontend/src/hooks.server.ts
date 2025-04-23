@@ -3,6 +3,7 @@ import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
 export const authentication: Handle = async ({ event, resolve }) => {
+  console.log("\n\nAUTHENTICATION");
   console.log("Cookie before load:", event.request.headers.get("cookie"));
 
   // TODO: read connection string from config
@@ -48,12 +49,18 @@ export const authentication: Handle = async ({ event, resolve }) => {
   return response;
 };
 
-const unprotectedPrefix = ["/", "/login"];
+const unprotectedRoutes = ["/", "/login"];
 export const authorization: Handle = async ({ event, resolve }) => {
+  console.log("\n\nAUTHORIZATION");
+  console.log("URL:", event.url.pathname);
+
   // if user tries to access protected routes & isn't logged in, redirect the user to /login
-  if (!unprotectedPrefix.some((path) => event.url.pathname.startsWith(path))) {
-    const loggedIn = await event.locals.pb.authStore;
-    if (!loggedIn) {
+  const isUnprotected = unprotectedRoutes.includes(event.url.pathname);
+
+  if (!isUnprotected) {
+    const isLoggedIn = event.locals.pb.authStore?.isValid;
+    if (!isLoggedIn) {
+      console.log("User not logged in. Redirecting to /login.");
       throw redirect(303, "/login");
     }
   }
