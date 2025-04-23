@@ -1,7 +1,7 @@
-import { goto } from "$app/navigation";
 import type { Actions, PageServerLoad } from "./$types.js";
 import { requestSignInOTP, verifyOTP } from "$lib/pocketbase/auth.js";
 import type { OTPResponse } from "pocketbase";
+import { redirect } from "@sveltejs/kit";
 
 import { superValidate, message } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -44,6 +44,7 @@ export const actions = {
     };
   },
 
+  // TODO: Button when OTP is expired to resend the otp
   otp: async ({ request }) => {
     const otpForm = await superValidate(request, zod(schemaOtpNumber));
 
@@ -68,6 +69,6 @@ export const actions = {
       result.message,
       JSON.stringify(result.data)
     );
-    goto("/");
+    redirect(303, "/");
   },
 } satisfies Actions;

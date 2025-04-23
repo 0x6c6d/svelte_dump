@@ -3,6 +3,8 @@
   import { ModeWatcher, toggleMode } from "mode-watcher";
   import { Sun, Moon } from "@lucide/svelte";
   import { Button } from "$lib/components/ui/button/index.js";
+  import LoginLogout from "$lib/components/custom/LoginLogout.svelte";
+  import { goto } from "$app/navigation";
 
   let { children } = $props();
 </script>
@@ -12,10 +14,10 @@
 <div class="min-h-screen flex flex-col">
   <!-- Navbar -->
   <nav class="w-full px-4 py-4 shadow flex justify-between items-center">
-    <div class="text-xl font-bold">ToDo</div>
+    <button class="text-xl font-bold" onclick={() => goto("/")}>ToDo</button>
     <div class="flex items-center">
       <!-- Login -->
-      <Button href="/login" class="mr-3 align-middle">Login / Sign up</Button>
+      <LoginLogout />
       <!-- Toggle theme -->
       <Button on:click={toggleMode} variant="outline" size="icon">
         <Sun
