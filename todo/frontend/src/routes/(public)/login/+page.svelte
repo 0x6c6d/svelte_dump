@@ -4,12 +4,23 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
+  import type { PageServerLoad } from "./$types.js";
+  import { redirect } from "@sveltejs/kit";
   // form validation
   import { superForm } from "sveltekit-superforms/client";
 
   let { data } = $props();
   const otpRequested = writable(false);
   const otpResponse = writable<OTPResponse | null>(null);
+
+  export const load = (async ({ locals }) => {
+    // redirect to /dashboard if the user is already logged in
+    if (locals.pb.authStore.record) {
+      return redirect(303, "/dashboard");
+    }
+
+    return {};
+  }) satisfies PageServerLoad;
 
   const {
     form: mailForm,
@@ -19,7 +30,6 @@
   } = superForm(data.mailForm, {
     onResult: ({ result }) => {
       console.log("MailForm onResult: ", JSON.stringify(result));
-      console.log(JSON.stringify(mailMessage));
       if (result.type === "success" && result.data && result.data.otpResponse) {
         otpRequested.set(true);
         otpResponse.set(result.data!.otpResponse);
@@ -32,7 +42,11 @@
     message: otpMessage,
     errors: otpErrors,
     enhance: otpEnhance,
-  } = superForm(data.otpForm, {});
+  } = superForm(data.otpForm, {
+    onResult: ({ result }) => {
+      console.log("OtpForm onResult: ", JSON.stringify(result));
+    },
+  });
 </script>
 
 {#if !$otpRequested}

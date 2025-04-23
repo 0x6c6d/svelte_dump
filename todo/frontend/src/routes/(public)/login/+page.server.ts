@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types.js";
-import { requestSignInOTP, verifyOTP } from "$lib/pocketbase/auth.js";
-import type { OTPResponse } from "pocketbase";
+import { requestSignInOTP } from "$lib/pocketbase/auth.js";
 import { redirect } from "@sveltejs/kit";
 
 import { superValidate, message } from "sveltekit-superforms";
@@ -9,6 +8,7 @@ import {
   schemaOtpMail,
   schemaOtpNumber,
 } from "$lib/common/schemas/otpSchema.js";
+import { pb } from "$lib/pocketbase/client.js";
 
 export const load: PageServerLoad = async () => {
   // Different schemas, no id required.
@@ -44,8 +44,7 @@ export const actions = {
     };
   },
 
-  // TODO: Button when OTP is expired to resend the otp
-  otp: async ({ request }) => {
+  otp: async ({ request, locals }) => {
     const otpForm = await superValidate(request, zod(schemaOtpNumber));
 
     if (!otpForm.valid) {
@@ -53,22 +52,21 @@ export const actions = {
       return message(otpForm, "Invalid form data");
     }
 
-    const otpResponse: OTPResponse = { otpId: otpForm.data.otpId };
-    const result = await verifyOTP(otpResponse, otpForm.data.otp);
-    if (!result.success) {
-      console.log("Verifying OTP failed: ", result.message);
-      otpForm.errors.otp = [`Verifying OTP failed: ${result.message}`];
-      return message(
-        otpForm,
-        result.message || "Failed to verify OTP. Please try again."
-      );
+    const authData = await locals.pb
+      .collection("users")
+      .authWithOTP(otpForm.data.otpId, otpForm.data.otp);
+    if (!authData) {
+      console.log("Verifying OTP failed: ");
+      otpForm.errors.otp = [`Verifying OTP failed:`];
+      return message(otpForm, "Failed to verify OTP. Please try again.");
     }
 
-    console.log(
-      "Verifying OTP success: ",
-      result.message,
-      JSON.stringify(result.data)
-    );
-    redirect(303, "/");
+    console.log("Verifying OTP success: ", JSON.stringify(authData));
+    redirect(303, "/dashboard");
+  },
+  logout: async ({ locals }) => {
+    console.log("Logout user:", JSON.stringify(locals.pb.authStore));
+    await locals.pb.authStore.clear();
+    throw redirect(303, "/login");
   },
 } satisfies Actions;

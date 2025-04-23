@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { pb } from "$lib/pocketbase/pocketbase";
+  import { pb } from "$lib/pocketbase/client";
   import * as Card from "$lib/components/ui/card/index";
 
   let { children } = $props();

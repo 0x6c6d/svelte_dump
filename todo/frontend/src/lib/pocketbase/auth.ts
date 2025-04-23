@@ -1,6 +1,6 @@
-import { pb } from "./pocketbase";
+import { pb } from "./client";
 import type { OTPResponse } from "pocketbase";
-import { generateRandomString } from "$lib/common/utils/random";
+import { generateRandomString } from "$lib/common/utils/helper";
 
 /**
  * Checks if a user with the given email already exists

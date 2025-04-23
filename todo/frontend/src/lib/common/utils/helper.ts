@@ -1,3 +1,8 @@
+/**
+ * Generates a cryptographically secure random string of a specified length
+ * @param length Length of the string to generate (default is 30)
+ * @returns A random string containing uppercase, lowercase, numbers, and special characters
+ */
 export function generateRandomString(length = 30): string {
   // Characters to use in the random string
   const chars =
@@ -21,3 +26,12 @@ export function generateRandomString(length = 30): string {
 
   return result;
 }
+
+/**
+ * Deep clones an object, including non-plain JavaScript objects (non-POJOs)
+ * @param obj The object to be cloned
+ * @returns A deep copy of the original object with all nested structures duplicated
+ */
+export const cloneNonPOJOs = (obj: any) => {
+  return structuredClone(obj);
+};
