@@ -8,7 +8,6 @@ import {
   schemaOtpMail,
   schemaOtpNumber,
 } from "$lib/common/schemas/otpSchema.js";
-import { pb } from "$lib/pocketbase/client.js";
 
 export const load: PageServerLoad = async () => {
   // Different schemas, no id required.
@@ -18,6 +17,7 @@ export const load: PageServerLoad = async () => {
   return { mailForm, otpForm };
 };
 
+// TODO: remove the pocketbase/auth.ts file and to all the stuff here
 export const actions = {
   mail: async ({ request }) => {
     const mailForm = await superValidate(request, zod(schemaOtpMail));

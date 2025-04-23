@@ -1,13 +1,9 @@
+import PocketBase from "pocketbase";
+
 declare global {
-  namespace App {
-    // interface Error {}
+  declare namespace App {
     interface Locals {
       pb: PocketBase;
     }
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
   }
 }
-
-export {};

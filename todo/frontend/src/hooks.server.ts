@@ -2,9 +2,10 @@ import PocketBase from "pocketbase";
 import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
+// MIDDLEWARE
+// every request goes through the "authentication" & "authorization" methods
 export const authentication: Handle = async ({ event, resolve }) => {
   console.log("\n\nAUTHENTICATION");
-  console.log("Cookie before load:", event.request.headers.get("cookie"));
 
   // TODO: read connection string from config
   event.locals.pb = new PocketBase("http://localhost:8090");
@@ -14,38 +15,22 @@ export const authentication: Handle = async ({ event, resolve }) => {
     event.request.headers.get("cookie") || ""
   );
 
-  console.log(
-    "Auth store valid after load:",
-    event.locals.pb.authStore.isValid
-  );
-
   try {
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
     event.locals.pb.authStore.isValid &&
       (await event.locals.pb.collection("users").authRefresh());
-  } catch (error: any) {
-    console.error("Auth refresh detailed error:", error.message, error.status);
+  } catch (_) {
     // clear the auth store on failed refresh
     event.locals.pb.authStore.clear();
   }
 
-  console.log(
-    "Auth store valid after refresh:",
-    event.locals.pb.authStore.isValid
-  );
-  console.log(
-    "Auth store model after refresh:",
-    event.locals.pb.authStore.record
-  );
-
   const response = await resolve(event);
+  // send back the default 'pb_auth' cookie to the client with the latest store state
+  response.headers.append(
+    "set-cookie",
+    event.locals.pb.authStore.exportToCookie()
+  );
 
-  const cookieToExport = event.locals.pb.authStore.exportToCookie({
-    sameSite: "Lax",
-  });
-  console.log("Exporting cookie:", cookieToExport);
-
-  response.headers.append("set-cookie", cookieToExport);
   return response;
 };
 
