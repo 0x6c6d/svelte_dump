@@ -1,5 +1,4 @@
 import { pb } from "./client";
-import type { OTPResponse } from "pocketbase";
 import { generateRandomString } from "$lib/common/utils/helper";
 
 /**
@@ -90,34 +89,6 @@ export async function requestSignInOTP(email: string) {
     return {
       success: false,
       message: error instanceof Error ? error.message : "Authentication failed",
-      data: null,
-    };
-  }
-}
-
-/**
- * Verifies and completes the OTP authentication process
- * @param result The OTPResponse from the requestSignInOTP() function
- * @param otp The OTP received via email
- * @returns Promise resolving to auth data
- */
-export async function verifyOTP(result: OTPResponse, otp: string) {
-  try {
-    console.log("Try to sign in with OTP: ", otp);
-    const authData = await pb
-      .collection("users")
-      .authWithOTP(result.otpId, otp);
-
-    return {
-      success: true,
-      message: "OTP verified successfully",
-      data: authData,
-    };
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Failed to verify OTP",
       data: null,
     };
   }

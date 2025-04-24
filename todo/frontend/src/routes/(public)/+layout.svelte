@@ -1,9 +1,11 @@
 <script lang="ts">
   import "../../app.css";
   import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   import Button from "$lib/components/ui/button/button.svelte";
 
   let { children } = $props();
+  let currentRoute = $page.url.pathname;
 </script>
 
 <div class="min-h-screen flex flex-col">
@@ -12,7 +14,9 @@
     <button class="text-xl font-bold" onclick={() => goto("/")}>ToDo</button>
     <div class="flex items-center">
       <!-- Login -->
-      <Button on:click={() => goto("/login")}>Login</Button>
+      {#if currentRoute !== "/login"}
+        <Button on:click={() => goto("/login")}>Login</Button>
+      {/if}
     </div>
   </nav>
 

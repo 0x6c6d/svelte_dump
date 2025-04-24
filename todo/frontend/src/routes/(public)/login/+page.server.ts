@@ -10,14 +10,12 @@ import {
 } from "$lib/common/schemas/otpSchema.js";
 
 export const load: PageServerLoad = async () => {
-  // Different schemas, no id required.
   const mailForm = await superValidate(zod(schemaOtpMail));
   const otpForm = await superValidate(zod(schemaOtpNumber));
 
   return { mailForm, otpForm };
 };
 
-// TODO: remove the pocketbase/auth.ts file and to all the stuff here
 export const actions = {
   mail: async ({ request }) => {
     const mailForm = await superValidate(request, zod(schemaOtpMail));
@@ -55,7 +53,7 @@ export const actions = {
     const authData = await locals.pb
       .collection("users")
       .authWithOTP(otpForm.data.otpId, otpForm.data.otp);
-    if (!authData) {
+    if (!authData.record.id) {
       console.log("Verifying OTP failed: ");
       otpForm.errors.otp = [`Verifying OTP failed:`];
       return message(otpForm, "Failed to verify OTP. Please try again.");
@@ -64,9 +62,10 @@ export const actions = {
     console.log("Verifying OTP success: ", JSON.stringify(authData));
     redirect(303, "/dashboard");
   },
+
   logout: async ({ locals }) => {
     console.log("Logout user:", JSON.stringify(locals.pb.authStore));
-    await locals.pb.authStore.clear();
+    locals.pb.authStore.clear();
     throw redirect(303, "/login");
   },
 } satisfies Actions;
