@@ -1,5 +1,6 @@
 # BACKEND
 /backend/pb_data
+/backend/pocketbase
 
 # FRONTEND
 frontend/node_modules
