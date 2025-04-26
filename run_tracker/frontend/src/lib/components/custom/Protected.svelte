@@ -1,15 +1,21 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { user } from "$lib/common/stores/auth";
+  import { user } from "$lib/pocketbase";
   import { onMount } from "svelte";
 
   let { children } = $props();
+  let isLoading = $state(true);
 
   onMount(() => {
     if (!$user) {
       goto("/login");
     }
+    isLoading = false;
   });
 </script>
 
-{@render children()}
+{#if isLoading}
+  <div class="min-h-screen flex items-center justify-center">Loading...</div>
+{:else}
+  {@render children()}
+{/if}

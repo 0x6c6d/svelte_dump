@@ -61,11 +61,13 @@
     try {
       const validatedOtp = schemaOtp.parse({ otp });
 
+      console.log(otpResponse.otpId, validatedOtp.otp);
       const result = await pb
         .collection("users")
         .authWithOTP(otpResponse.otpId, validatedOtp.otp);
 
       if (!result) {
+        console.log("OTP verification failed.");
         msg = "OTP verification failed. Please try again.";
         isLoading = false;
         return;
@@ -76,9 +78,8 @@
     } catch (error) {
       if (error instanceof ZodError) {
         error.errors.forEach((err) => {
-          if (err.path.includes("otp")) {
-            otpError = err.message;
-          }
+          console.log(err.message);
+          otpError += `${err.message} `;
         });
       } else {
         msg = "OTP verification failed. Please try again.";
@@ -124,9 +125,11 @@
           <p class="text-sm text-red-500">{emailError}</p>
         {/if}
       </div>
+
       {#if msg}
         <p
-          class={msg.includes("Error") || msg.includes("failed")
+          class={msg.toLowerCase().includes("error") ||
+          msg.toLowerCase().includes("fail")
             ? "text-red-500 text-sm"
             : "text-green-600 text-sm"}
         >
@@ -154,7 +157,8 @@
 
       {#if msg}
         <p
-          class={msg.includes("Error") || msg.includes("failed")
+          class={msg.toLowerCase().includes("error") ||
+          msg.toLowerCase().includes("fail")
             ? "text-red-500 text-sm"
             : "text-green-600 text-sm"}
         >

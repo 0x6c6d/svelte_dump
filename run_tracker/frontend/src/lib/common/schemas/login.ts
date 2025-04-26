@@ -9,5 +9,4 @@ export const schemaOtp = z.object({
     .string()
     .length(6, { message: "OTP must be exactly 6 digits" })
     .regex(/^\d{6}$/, { message: "OTP must contain only numbers" }),
-  otpId: z.string(),
 });

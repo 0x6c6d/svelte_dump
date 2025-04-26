@@ -1,6 +1,7 @@
 import PocketBase, { ClientResponseError } from "pocketbase";
 import { writable } from "svelte/store";
 import { generateRandomString } from "./utils/helper";
+import { goto } from "$app/navigation";
 
 // TODO: add url from config
 export const pb = new PocketBase("http://localhost:8090");
@@ -23,6 +24,7 @@ pb.authStore.onChange((auth) => {
  */
 export function signOut() {
   pb.authStore.clear();
+  goto("/");
 }
 
 /**
