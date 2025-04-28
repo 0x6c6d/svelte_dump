@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { pb, user } from "$lib/pocketbase";
-  import { signOut, requestSignInOTP } from "$lib/pocketbase";
+  import { pb, user } from "$lib/pb/auth";
+  import { signOut, requestSignInOTP } from "$lib/pb/auth";
   import type { OTPResponse } from "pocketbase";
   import { goto } from "$app/navigation";
-  import { schemaMail, schemaOtp } from "$lib/common/schemas/login";
+  import { schemaMail, schemaOtp } from "$lib/common/schemas";
   import { ZodError } from "zod";
 
   import Button from "../ui/button/button.svelte";

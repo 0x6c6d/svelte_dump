@@ -5,7 +5,7 @@
   import Protected from "$lib/components/custom/Protected.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import { goto } from "$app/navigation";
-  import { signOut } from "$lib/pocketbase";
+  import { signOut } from "$lib/pb/auth";
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 </script>

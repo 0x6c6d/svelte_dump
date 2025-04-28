@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { user } from "$lib/pocketbase";
+  import { user } from "$lib/pb/auth";
   import { onMount } from "svelte";
 
   let { children } = $props();

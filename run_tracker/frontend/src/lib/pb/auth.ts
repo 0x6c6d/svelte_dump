@@ -1,12 +1,9 @@
-import PocketBase, { ClientResponseError } from "pocketbase";
+import { ClientResponseError } from "pocketbase";
+import { pb } from "./pb";
 import { writable } from "svelte/store";
-import { generateRandomString } from "./utils/helper";
+import { generateRandomString } from "../utils/helper";
 import { goto } from "$app/navigation";
 
-// TODO: add url from config
-export const pb = new PocketBase("http://localhost:8090");
-
-// ---------------- AUTH -------------------
 /**
  * A writable store that holds the current authenticated user's record.
  * This can be subscribed to for reactive updates across the app.
