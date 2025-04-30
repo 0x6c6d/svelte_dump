@@ -6,6 +6,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import { goto } from "$app/navigation";
   import { signOut } from "$lib/pb/auth";
+  import { UserCircle } from "@lucide/svelte";
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 </script>
@@ -18,6 +19,9 @@
         >Run Tracker</button
       >
       <div class="flex items-center">
+        <Button on:click={() => goto("/profile")} class="mr-3">
+          <UserCircle />
+        </Button>
         <!-- Sign out -->
         <Button on:click={signOut}>Sign out</Button>
       </div>

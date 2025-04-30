@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { pb, user } from "$lib/pb/auth";
+  import { user } from "$lib/pb/auth";
+  import { pb } from "$lib/pb/pb";
   import { signOut, requestSignInOTP } from "$lib/pb/auth";
   import type { OTPResponse } from "pocketbase";
   import { goto } from "$app/navigation";

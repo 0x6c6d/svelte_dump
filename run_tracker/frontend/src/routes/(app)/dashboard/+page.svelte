@@ -7,7 +7,7 @@
   import * as Input from "$lib/components/ui/input";
   import * as Label from "$lib/components/ui/label";
   import * as Textarea from "$lib/components/ui/textarea";
-  import { addRunAsync } from "$lib/pb/runs";
+  import { addRunAsync, deleteRunAsync, loadRunsAsync } from "$lib/pb/runs";
 
   // State for runs and form
   let runs: Run[] = $state([]);
@@ -19,10 +19,10 @@
     comment: "",
   });
 
-  // TODO: Load runs from PB
-  onMount(() => {});
+  onMount(async () => {
+    runs = await loadRunsAsync();
+  });
 
-  // Add a new run
   async function addRun() {
     const result = await addRunAsync(newRun);
 
@@ -41,10 +41,15 @@
     showAddDialog = false;
   }
 
-  // TODO: Delete a run
-  function deleteRun(id: string) {}
+  async function deleteRun(id: string) {
+    const result = await deleteRunAsync(id);
+    if (result) {
+      runs = runs.filter((r) => r.id != id);
+    } else {
+      alert("Failed to delete entry. Try again");
+    }
+  }
 
-  // Reset the form
   function resetForm() {
     newRun = {
       userId: $user?.id ?? "",
